@@ -1,0 +1,15 @@
+# created by virtualenv automatically
+*
+# Ignore virtual environment
+venv/
+.venv/
+
+# Ignore Python cache files
+__pycache__/
+*.py[cod]
+
+# OS-specific files
+.DS_Store
+
+# Editor/IDE settings
+.idea/
