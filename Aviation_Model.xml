@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.1.0/rti_routing_service.xsd" version="7.1.0">
+    <types>
+      <struct name="Information">
+        <member name="data" type="string"/>
+      </struct>
+    </types>
+
+    <domain_library name="AviationLibrary">
+      <domain name="Aviation" domain_id="3">
+        <register_type name="Information" type_ref="Information"/>
+        <topic name="Instructions" register_type_ref="Information">
+          <topic_qos>
+            <base_name>
+              <element>BuiltinQosSnippetLib::Optimization.ReliabilityProtocol.KeepAll</element>
+              <element>BuiltinQosSnippetLib::QosPolicy.Reliability.Reliable</element>
+              <element>BuiltinQosSnippetLib::QosPolicy.Durability.Persistent</element>
+            </base_name>
+          </topic_qos>
+        </topic>
+        <topic name="Acknowledgements" register_type_ref="Information">
+          <topic_qos>
+            <base_name>
+              <element>BuiltinQosSnippetLib::Optimization.ReliabilityProtocol.KeepAll</element>
+              <element>BuiltinQosSnippetLib::QosPolicy.Reliability.Reliable</element>
+              <element>BuiltinQosSnippetLib::QosPolicy.Durability.Persistent</element>
+            </base_name>
+          </topic_qos>
+        </topic>
+        <topic name="Set Mode" register_type_ref="Information">
+          <topic_qos>
+            <base_name>
+              <element>BuiltinQosSnippetLib::QosPolicy.Reliability.Reliable</element>
+              <element>BuiltinQosSnippetLib::QosPolicy.History.KeepLast_1</element>
+            </base_name>
+          </topic_qos>
+        </topic>
+        <topic name="Current Mode" register_type_ref="Information">
+          <topic_qos>
+            <base_name>
+              <element>BuiltinQosSnippetLib::QosPolicy.History.KeepLast_1</element>
+              <element>BuiltinQosSnippetLib::QosPolicy.Reliability.Reliable</element>
+            </base_name>
+          </topic_qos>
+        </topic>
+        <topic name="Manual Flight Controls" register_type_ref="Information">
+          <topic_qos>
+            <base_name>
+              <element>BuiltinQosSnippetLib::QosPolicy.History.KeepLast_1</element>
+              <element>BuiltinQosSnippetLib::QosPolicy.Reliability.Reliable</element>
+            </base_name>
+          </topic_qos>
+        </topic>
+        <topic name="Instrument Readings" register_type_ref="Information">
+          <topic_qos>
+            <base_name>
+              <element>BuiltinQosSnippetLib::QosPolicy.Reliability.Reliable</element>
+              <element>BuiltinQosSnippetLib::Optimization.ReliabilityProtocol.KeepAll</element>
+            </base_name>
+          </topic_qos>
+        </topic>
+        <topic name="Automated Flight Controls" register_type_ref="Information">
+          <topic_qos>
+            <base_name>
+              <element>BuiltinQosSnippetLib::QosPolicy.Reliability.Reliable</element>
+              <element>BuiltinQosSnippetLib::QosPolicy.History.KeepLast_1</element>
+            </base_name>
+          </topic_qos>
+        </topic>
+        <topic name="Sensor Readings" register_type_ref="Information">
+          <topic_qos>
+            <base_name>
+              <element>BuiltinQosSnippetLib::QosPolicy.Reliability.BestEffort</element>
+            </base_name>
+          </topic_qos>
+        </topic>
+      </domain>
+    </domain_library>
+
+    <domain_participant_library name="Aviation">
+      <domain_participant name="AirTrafficControl" domain_ref="AviationLibrary::Aviation">
+        <publisher name="AirTrafficControl_Publisher">
+          <data_writer name="AirTrafficControl_DataWriter" topic_ref="Instructions">
+            <datawriter_qos>
+              <base_name>
+                <element>BuiltinQosSnippetLib::Optimization.ReliabilityProtocol.KeepAll</element>
+                <element>BuiltinQosSnippetLib::QosPolicy.Reliability.Reliable</element>
+                <element>BuiltinQosSnippetLib::QosPolicy.Durability.Persistent</element>
+              </base_name>
+            </datawriter_qos>
+          </data_writer>
+        </publisher>
+        <subscriber name="AirTrafficControl_Subscriber">
+          <data_reader name="AirTrafficControl_DataReader" topic_ref="Acknowledgements">
+            <datareader_qos>
+              <base_name>
+                <element>BuiltinQosSnippetLib::Optimization.ReliabilityProtocol.KeepAll</element>
+                <element>BuiltinQosSnippetLib::QosPolicy.Reliability.Reliable</element>
+                <element>BuiltinQosSnippetLib::QosPolicy.Durability.Persistent</element>
+              </base_name>
+            </datareader_qos>
+          </data_reader>
+        </subscriber>
+      </domain_participant>
+      <domain_participant name="FlightCrew" domain_ref="AviationLibrary::Aviation">
+        <subscriber name="FlightCrew_Subscriber">
+          <data_reader name="FC_S1" topic_ref="Instructions">
+            <datareader_qos>
+              <base_name>
+                <element>BuiltinQosSnippetLib::QosPolicy.Reliability.Reliable</element>
+                <element>BuiltinQosSnippetLib::Optimization.ReliabilityProtocol.KeepAll</element>
+                <element>BuiltinQosSnippetLib::QosPolicy.Durability.Persistent</element>
+              </base_name>
+            </datareader_qos>
+          </data_reader>
+          <data_reader name="FC_S2" topic_ref="Current Mode">
+            <datareader_qos>
+              <base_name>
+                <element>BuiltinQosSnippetLib::Optimization.ReliabilityProtocol.KeepAll</element>
+                <element>BuiltinQosSnippetLib::QosPolicy.Reliability.Reliable</element>
+              </base_name>
+            </datareader_qos>
+          </data_reader>
+          <data_reader name="FC_S3" topic_ref="Instrument Readings">
+            <datareader_qos>
+              <base_name>
+                <element>BuiltinQosSnippetLib::Optimization.ReliabilityProtocol.KeepAll</element>
+                <element>BuiltinQosSnippetLib::QosPolicy.Reliability.Reliable</element>
+              </base_name>
+            </datareader_qos>
+          </data_reader>
+        </subscriber>
+        <publisher name="FlightCrew_Publisher">
+          <data_writer name="FC_W1" topic_ref="Acknowledgements">
+            <datawriter_qos>
+              <base_name>
+                <element>BuiltinQosSnippetLib::Optimization.ReliabilityProtocol.KeepAll</element>
+                <element>BuiltinQosSnippetLib::QosPolicy.Reliability.Reliable</element>
+                <element>BuiltinQosSnippetLib::QosPolicy.Durability.Persistent</element>
+              </base_name>
+            </datawriter_qos>
+          </data_writer>
+          <data_writer name="FC_W2" topic_ref="Set Mode">
+            <datawriter_qos>
+              <base_name>
+                <element>BuiltinQosSnippetLib::QosPolicy.History.KeepLast_1</element>
+                <element>BuiltinQosSnippetLib::QosPolicy.Reliability.Reliable</element>
+              </base_name>
+            </datawriter_qos>
+          </data_writer>
+          <data_writer name="FC_W3" topic_ref="Manual Flight Controls">
+            <datawriter_qos>
+              <base_name>
+                <element>BuiltinQosSnippetLib::QosPolicy.Reliability.Reliable</element>
+                <element>BuiltinQosSnippetLib::QosPolicy.History.KeepLast_1</element>
+              </base_name>
+            </datawriter_qos>
+          </data_writer>
+        </publisher>
+      </domain_participant>
+      <domain_participant name="AircraftAutomation" domain_ref="AviationLibrary::Aviation">
+        <publisher name="AircraftAutomation_Publisher">
+          <data_writer name="AA_W1" topic_ref="Current Mode">
+            <datawriter_qos>
+              <base_name>
+                <element>BuiltinQosSnippetLib::Optimization.ReliabilityProtocol.KeepAll</element>
+                <element>BuiltinQosSnippetLib::QosPolicy.Reliability.Reliable</element>
+              </base_name>
+            </datawriter_qos>
+          </data_writer>
+          <data_writer name="AA_W2" topic_ref="Automated Flight Controls">
+            <datawriter_qos>
+              <base_name>
+                <element>BuiltinQosSnippetLib::QosPolicy.Reliability.Reliable</element>
+                <element>BuiltinQosSnippetLib::QosPolicy.History.KeepLast_1</element>
+              </base_name>
+            </datawriter_qos>
+          </data_writer>
+        </publisher>
+        <subscriber name="AircraftAutomation_Subscriber">
+          <data_reader name="AA_S1" topic_ref="Set Mode">
+            <datareader_qos>
+              <base_name>
+                <element>BuiltinQosSnippetLib::QosPolicy.History.KeepLast_1</element>
+                <element>BuiltinQosSnippetLib::QosPolicy.Reliability.Reliable</element>
+              </base_name>
+            </datareader_qos>
+          </data_reader>
+          <data_reader name="AA_S2" topic_ref="Sensor Readings">
+            <datareader_qos>
+              <base_name>
+                <element>BuiltinQosSnippetLib::QosPolicy.Reliability.BestEffort</element>
+              </base_name>
+            </datareader_qos>
+          </data_reader>
+        </subscriber>
+      </domain_participant>
+      <domain_participant name="PhysicalAircraftProcesses" domain_ref="AviationLibrary::Aviation">
+        <subscriber name="PhysicalAircraftProcesses_Subscriber">
+          <data_reader name="PAP_S1" topic_ref="Manual Flight Controls">
+            <datareader_qos>
+              <base_name>
+                <element>BuiltinQosSnippetLib::QosPolicy.Reliability.Reliable</element>
+                <element>BuiltinQosSnippetLib::QosPolicy.History.KeepLast_1</element>
+              </base_name>
+            </datareader_qos>
+          </data_reader>
+          <data_reader name="PAP_S2" topic_ref="Automated Flight Controls">
+            <datareader_qos>
+              <base_name>
+                <element>BuiltinQosSnippetLib::QosPolicy.Reliability.Reliable</element>
+                <element>BuiltinQosSnippetLib::QosPolicy.History.KeepLast_1</element>
+              </base_name>
+            </datareader_qos>
+          </data_reader>
+        </subscriber>
+        <publisher name="PhysicalAircraftProcesses_Publisher">
+          <data_writer name="PAP_W1" topic_ref="Instrument Readings">
+            <datawriter_qos>
+              <base_name>
+                <element>BuiltinQosSnippetLib::Optimization.ReliabilityProtocol.KeepAll</element>
+                <element>BuiltinQosSnippetLib::QosPolicy.Reliability.Reliable</element>
+              </base_name>
+            </datawriter_qos>
+          </data_writer>
+          <data_writer name="PAP_W2" topic_ref="Sensor Readings">
+            <datawriter_qos>
+              <base_name>
+                <element>BuiltinQosSnippetLib::QosPolicy.Reliability.BestEffort</element>
+              </base_name>
+            </datawriter_qos>
+          </data_writer>
+        </publisher>
+      </domain_participant>
+    </domain_participant_library>
+
+</dds>
